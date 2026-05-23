@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include <stdarg.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -64,7 +65,21 @@ static void MX_CAN1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+int uart_printf(const char* format, ...)
+{
+  char buffer[96];
+  va_list args;
+  va_start(args, format);
+  int len = vsnprintf(buffer, sizeof(buffer), format, args);
+  va_end(args);
+  
+  if(len > 0)
+  {
+    HAL_UART_Transmit(&huart2, (uint8_t*)buffer, len, HAL_MAX_DELAY);
+  }
+  
+  return len;
+}
 /* USER CODE END 0 */
 
 /**
@@ -115,15 +130,15 @@ int main(void)
   while (1)
   {
 
-    for(int counter1 = 0; counter1 <= 1000; counter1 += 10){
-      __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, counter1);
-      HAL_Delay(10);
-    }
-    for(int counter2 = 1000; counter2 >= 0; counter2 -= 10){
-      __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, counter2);
-      HAL_Delay(10);
-    }
-    // printf("%d\n",HAL_GPIO_ReadPin(in_GPIO_Port, in_Pin));
+    // for(int counter1 = 0; counter1 <= 1000; counter1 += 10){
+    //   __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, counter1);
+    //   HAL_Delay(10);
+    // }
+    // for(int counter2 = 1000; counter2 >= 0; counter2 -= 10){
+    //   __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, counter2);
+    //   HAL_Delay(10);
+    // }
+    uart_printf("Input: %d\n", HAL_GPIO_ReadPin(in_GPIO_Port, in_Pin));
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
