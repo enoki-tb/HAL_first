@@ -123,6 +123,9 @@ int main(void)
   HAL_GPIO_WritePin(dir_GPIO_Port, dir_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(slp_GPIO_Port, slp_Pin, GPIO_PIN_SET);
 
+  char c = 'A';
+  HAL_UART_Transmit(&huart2, (uint8_t*)&c, sizeof(c), HAL_MAX_DELAY);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -138,7 +141,17 @@ int main(void)
     //   __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, counter2);
     //   HAL_Delay(10);
     // }
-    uart_printf("Input: %d\n", HAL_GPIO_ReadPin(in_GPIO_Port, in_Pin));
+    
+    if (HAL_UART_Receive(&huart2, (uint8_t*)&c, sizeof(c), HAL_MAX_DELAY) == HAL_OK){
+
+       uart_printf("受信：%c\n", c);
+       HAL_Delay(1000);
+       c++;
+       HAL_UART_Transmit(&huart2, (uint8_t*)&c, sizeof(c), HAL_MAX_DELAY);
+
+    }
+
+    // uart_printf("Input: %d\n", HAL_GPIO_ReadPin(in_GPIO_Port, in_Pin));
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
